@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>โหวตร้านอาหาร · Team Engagement Party 19 มิ.ย. 2569</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0D1B2A;
+    --navy-mid: #1B2E42;
+    --coral: #FF5C3A;
+    --coral-light: #FFF0ED;
+    --coral-dark: #CC3D20;
+    --lime: #C6F135;
+    --lime-light: #F4FCDB;
+    --white: #FFFFFF;
+    --off-white: #F7F9FB;
+    --text-light: #B8C8D8;
+    --text-mid: #6B8299;
+    --border-light: #DDE6EF;
+    --cyan-light: #E0FAFE;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--off-white); font-family: 'Sarabun', sans-serif; color: var(--navy); min-height: 100vh; padding: 0 0 4rem; }
+
+  /* ── Setup banner ── */
+  .setup-banner {
+    background: #1B2E42;
+    color: var(--text-light);
+    font-size: 13px;
+    padding: 12px 1.5rem;
+    text-align: center;
+    display: none;
+  }
+  .setup-banner.visible { display: block; }
+  .setup-banner strong { color: var(--lime); }
+  .setup-banner a { color: var(--coral); }
+
+  /* ── Header ── */
+  .page-header {
+    background: var(--navy);
+    padding: 2.5rem 1.5rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: var(--coral); opacity: 0.12;
+  }
+  .page-header::after {
+    content: ''; position: absolute; bottom: -80px; left: -40px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: var(--lime); opacity: 0.08;
+  }
+
+  .event-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--lime);
+    margin-bottom: 1rem; position: relative;
+  }
+  .event-eyebrow::before, .event-eyebrow::after {
+    content: ''; display: block; width: 24px; height: 1.5px;
+    background: var(--lime); opacity: 0.5;
+  }
+
+  .page-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(20px, 5vw, 30px); font-weight: 700;
+    color: var(--white); line-height: 1.3; margin-bottom: 8px; position: relative;
+  }
+  .page-sub { font-size: 14px; color: var(--text-light); margin-bottom: 1.5rem; position: relative; }
+
+  .deadline-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--coral); color: var(--white);
+    font-size: 13px; font-weight: 600; padding: 7px 18px;
+    border-radius: 99px; position: relative;
+  }
+
+  /* ── Form container ── */
+  .form-wrap { max-width: 580px; margin: 2rem auto 0; padding: 0 1rem; }
+
+  .section-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-mid); margin-bottom: 12px;
+  }
+
+  /* ── Cards ── */
+  .restaurant-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 1.75rem; }
+
+  .card {
+    background: var(--white); border: 2px solid var(--border-light);
+    border-radius: var(--radius); padding: 1.1rem 1.25rem;
+    cursor: pointer; position: relative;
+    transition: border-color 0.18s, box-shadow 0.18s, transform 0.12s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card:hover { border-color: var(--coral); box-shadow: 0 4px 20px rgba(255,92,58,0.12); transform: translateY(-2px); }
+  .card.selected { border-color: var(--coral); box-shadow: 0 4px 24px rgba(255,92,58,0.18); }
+  .card.selected .card-accent { background: var(--coral); }
+  .card input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+
+  .card-accent {
+    position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+    border-radius: 14px 0 0 14px; background: var(--border-light); transition: background 0.18s;
+  }
+  .card-inner { display: flex; gap: 14px; align-items: flex-start; padding-left: 8px; }
+
+  .radio-dot {
+    flex-shrink: 0; margin-top: 2px; width: 20px; height: 20px;
+    border-radius: 50%; border: 2px solid var(--border-light);
+    background: var(--off-white); display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .card.selected .radio-dot { border-color: var(--coral); background: var(--coral); }
+  .radio-dot-inner {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--white); opacity: 0; transition: opacity 0.15s;
+  }
+  .card.selected .radio-dot-inner { opacity: 1; }
+
+  .card-body { flex: 1; min-width: 0; }
+  .card-number {
+    font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700;
+    color: var(--coral); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px;
+  }
+  .card-name {
+    font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700;
+    color: var(--navy); margin-bottom: 3px; line-height: 1.3;
+  }
+  .card-location {
+    font-size: 13px; color: var(--text-mid); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+  }
+  .map-link {
+    display: inline-flex; align-items: center; margin-left: 4px;
+    font-size: 12px; font-weight: 600; color: var(--coral);
+    text-decoration: none; padding: 2px 8px; border-radius: 99px;
+    border: 1.5px solid var(--coral); transition: background 0.15s, color 0.15s;
+  }
+  .map-link:hover { background: var(--coral); color: var(--white); }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; line-height: 1;
+  }
+  .tag-price   { background: var(--lime-light); color: #567A00; }
+  .tag-time    { background: var(--navy); color: var(--text-light); }
+  .tag-type    { background: var(--cyan-light); color: #007A8A; }
+  .tag-deposit { background: #FFF0ED; color: var(--coral-dark); }
+
+  /* ── Name field ── */
+  .field-group { margin-bottom: 1.25rem; }
+  .field-label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+  .field-input {
+    width: 100%; padding: 12px 14px; font-family: 'Sarabun', sans-serif;
+    font-size: 15px; color: var(--navy); background: var(--white);
+    border: 2px solid var(--border-light); border-radius: var(--radius-sm);
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field-input:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(255,92,58,0.1); }
+  .field-input::placeholder { color: var(--text-mid); }
+
+  /* ── Submit ── */
+  .submit-btn {
+    width: 100%; padding: 14px; font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px; font-weight: 700; color: var(--navy); background: var(--lime);
+    border: none; border-radius: var(--radius-sm); cursor: pointer;
+    transition: background 0.15s, transform 0.1s, opacity 0.15s; letter-spacing: 0.02em;
+  }
+  .submit-btn:hover:not(:disabled) { background: #b8e020; }
+  .submit-btn:active:not(:disabled) { transform: scale(0.98); }
+  .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .vote-note { text-align: center; font-size: 12px; color: var(--text-mid); margin-top: 10px; }
+
+  /* ── Loading spinner ── */
+  .spinner {
+    display: none; text-align: center; padding: 2rem;
+    font-size: 14px; color: var(--text-mid);
+  }
+  .spinner.visible { display: block; }
+  .spin {
+    display: inline-block; width: 24px; height: 24px;
+    border: 3px solid var(--border-light); border-top-color: var(--coral);
+    border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Results ── */
+  .results-section {
+    margin-top: 2rem; padding-top: 1.75rem;
+    border-top: 2px solid var(--border-light); display: none;
+  }
+  .results-section.visible { display: block; }
+
+  .result-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .result-name {
+    font-size: 13px; font-weight: 600; color: var(--navy);
+    width: 145px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .result-track { flex: 1; background: var(--border-light); border-radius: 99px; height: 10px; overflow: hidden; }
+  .result-fill { height: 100%; background: var(--coral); border-radius: 99px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+  .result-count {
+    font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;
+    color: var(--coral); min-width: 52px; text-align: right;
+  }
+  .total-note { font-size: 12px; color: var(--text-mid); text-align: center; margin-top: 4px; }
+
+  /* ── Success ── */
+  .success-msg { text-align: center; padding: 2rem 1rem 1rem; display: none; }
+  .success-msg.visible { display: block; }
+  .success-icon {
+    width: 60px; height: 60px; background: var(--lime); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;
+  }
+  .success-msg h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .success-msg p { font-size: 14px; color: var(--text-mid); }
+
+  /* ── Already voted ── */
+  .already-voted { text-align: center; padding: 2rem 1rem; display: none; }
+  .already-voted.visible { display: block; }
+  .already-voted-icon {
+    width: 60px; height: 60px; background: var(--coral-light); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;
+  }
+  .already-voted h3 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .already-voted p { font-size: 14px; color: var(--text-mid); }
+
+  /* ── Footer ── */
+  .page-footer { text-align: center; margin-top: 3rem; font-size: 12px; color: var(--text-mid); }
+  .ornament { color: var(--coral); margin: 0 6px; }
+
+  @media (max-width: 480px) {
+    .page-header { padding: 2rem 1rem 2rem; }
+    .card-name { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+
+
+<header class="page-header">
+  <div class="event-eyebrow">Team Engagement Party</div>
+  <h1 class="page-title">โหวตร้านอาหาร Team Engagement Party</h1>
+  <p class="page-sub">Vote for our team dinner restaurant · 19 June 2026</p>
+  <div class="deadline-pill">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>
+    ปิดโหวต 12 มิ.ย. เที่ยงวัน · Deadline: 12 Jun, 12PM
+  </div>
+</header>
+
+<main class="form-wrap">
+
+  <!-- Loading -->
+  <div class="spinner" id="spinner">
+    <div class="spin"></div><br>กำลังโหลด · Loading…
+  </div>
+
+  <!-- Form -->
+  <div id="formSection" style="display:none">
+    <div class="section-label" style="margin-top:1.75rem">เลือกร้านที่ชอบ · Pick your favourite</div>
+
+    <div class="restaurant-list" role="radiogroup" aria-label="Restaurant options">
+
+      <label class="card" id="card-0" onclick="selectCard(0)">
+        <div class="card-accent"></div>
+        <input type="radio" name="restaurant" value="0" />
+        <div class="card-inner">
+          <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+          <div class="card-body">
+            <div class="card-number">ตัวเลือกที่ 1</div>
+            <div class="card-name">อิเจ้ แจ่วฮ้อน แอนด์ ชาบู</div>
+            <div class="card-location">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Siam
+              <a href="https://share.google/lScz57k6w4sKAZCwu" target="_blank" onclick="event.stopPropagation()" class="map-link">ดูแผนที่ · Map ↗</a>
+            </div>
+            <div class="tags">
+              <span class="tag tag-price">฿298 / ฿498 + seafood</span>
+              <span class="tag tag-time">ปิด 4 ทุ่ม (22:00)</span>
+              <span class="tag tag-type">Buffet</span>
+              <span class="tag tag-deposit">มัดจำ 50% ห้องส่วนตัว</span>
+            </div>
+          </div>
+        </div>
+      </label>
+
+      <label class="card" id="card-1" onclick="selectCard(1)">
+        <div class="card-accent"></div>
+        <input type="radio" name="restaurant" value="1" />
+        <div class="card-inner">
+          <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+          <div class="card-body">
+            <div class="card-number">ตัวเลือกที่ 2</div>
+            <div class="card-name">นักล่าหมูกระทะ</div>
+            <div class="card-location">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              MBK
+              <a href="https://share.google/osWudjXjv4Lai35Vw" target="_blank" onclick="event.stopPropagation()" class="map-link">ดูแผนที่ · Map ↗</a>
+            </div>
+            <div class="tags">
+              <span class="tag tag-price">฿299 ขึ้นไป</span>
+              <span class="tag tag-time">ปิดตี 2 (02:00)</span>
+              <span class="tag tag-type">À la carte</span>
+            </div>
+          </div>
+        </div>
+      </label>
+
+      <label class="card" id="card-2" onclick="selectCard(2)">
+        <div class="card-accent"></div>
+        <input type="radio" name="restaurant" value="2" />
+        <div class="card-inner">
+          <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+          <div class="card-body">
+            <div class="card-number">ตัวเลือกที่ 3</div>
+            <div class="card-name">SSAMTHING TOGETHER</div>
+            <div class="card-location">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Samyan Midtown
+              <a href="https://share.google/Jw40CQg6iboxCtIOb" target="_blank" onclick="event.stopPropagation()" class="map-link">ดูแผนที่ · Map ↗</a>
+            </div>
+            <div class="tags">
+              <span class="tag tag-price">฿499 ขึ้นไป</span>
+              <span class="tag tag-time">ปิด 5 ทุ่ม (23:00)</span>
+              <span class="tag tag-type">Buffet</span>
+            </div>
+          </div>
+        </div>
+      </label>
+
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="nameInput">ชื่อของคุณ · Your name</label>
+      <input class="field-input" id="nameInput" type="text" placeholder="กรอกชื่อที่นี่ · Enter your name" autocomplete="off" />
+    </div>
+
+    <button class="submit-btn" id="submitBtn" disabled onclick="submitVote()">โหวต · Vote ✓</button>
+    <p class="vote-note">โหวตได้ 1 ครั้งต่อคน · One vote per person</p>
+
+    <div class="results-section" id="liveResults">
+      <div class="section-label">ผลโหวตปัจจุบัน · Current results</div>
+      <div id="liveResultBars"></div>
+      <p class="total-note" id="liveTotal"></p>
+    </div>
+  </div>
+
+  <!-- Success -->
+  <div class="success-msg" id="successMsg">
+    <div class="success-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h3>โหวตแล้ว! · Vote recorded!</h3>
+    <p id="successText">ขอบคุณที่ร่วมโหวต · Thank you for voting</p>
+    <div class="results-section visible" id="successResults" style="margin-top:1.5rem">
+      <div class="section-label">ผลโหวตปัจจุบัน · Current results</div>
+      <div id="successBars"></div>
+      <p class="total-note" id="successTotal"></p>
+    </div>
+  </div>
+
+  <!-- Already voted -->
+  <div class="already-voted" id="alreadyVoted">
+    <div class="already-voted-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF5C3A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <h3>โหวตแล้ว! · Already voted</h3>
+    <p>อุปกรณ์นี้โหวตไปแล้ว<br>This device has already cast a vote.</p>
+    <div class="results-section visible" id="alreadyResults" style="margin-top:1.5rem">
+      <div class="section-label">ผลโหวตปัจจุบัน · Current results</div>
+      <div id="alreadyBars"></div>
+      <p class="total-note" id="alreadyTotal"></p>
+    </div>
+  </div>
+
+
+</main>
+
+<footer class="page-footer" style="margin-top:2rem;">
+  <span class="ornament">✦</span> Team Engagement Party · 19 มิถุนายน 2569 <span class="ornament">✦</span>
+</footer>
+
+<script>
+  // ─── CONFIG — paste your JSONBin ID here ───────────────────────────
+  const BIN_ID = '6a28fc29f5f4af5e29d62ca9';
+  // ──────────────────────────────────────────────────────────────────
+
+  const API    = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+  const VOTED  = 'eng_poll_voted_19jun';
+  const NAMES  = [
+    'อิเจ้ แจ่วฮ้อน (Siam)',
+    'นักล่าหมูกระทะ (MBK)',
+    'SSAMTHING TOGETHER (Samyan)'
+  ];
+
+  let chosen = -1;
+  let currentData = { votes: [0,0,0], voters: [] };
+
+
+  const isSetup = true;
+
+  function show(id) {
+    ['spinner','formSection','successMsg','alreadyVoted'].forEach(s => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = s === id ? (id === 'formSection' ? 'block' : 'block') : 'none';
+    });
+    if (id === 'successMsg') document.getElementById('successMsg').classList.add('visible');
+    if (id === 'alreadyVoted') document.getElementById('alreadyVoted').classList.add('visible');
+  }
+
+  async function fetchData() {
+    if (!isSetup) {
+      show('formSection');
+      return;
+    }
+    show('spinner');
+    try {
+      const r = await fetch(API);
+      const j = await r.json();
+      currentData = j.record || { votes:[0,0,0], voters:[] };
+    } catch(e) {
+      currentData = { votes:[0,0,0], voters:[] };
+    }
+    if (localStorage.getItem(VOTED) === '1') {
+      show('alreadyVoted');
+      renderBars('alreadyBars', 'alreadyTotal');
+    } else {
+      show('formSection');
+      renderBars('liveResultBars', 'liveTotal');
+      const total = currentData.votes.reduce((a,b)=>a+b,0);
+      if (total > 0) document.getElementById('liveResults').classList.add('visible');
+    }
+  }
+
+  async function saveData(data) {
+    await fetch(API, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  }
+
+  function selectCard(idx) {
+    chosen = idx;
+    document.querySelectorAll('.card').forEach((c,i) => c.classList.toggle('selected', i===idx));
+    checkReady();
+  }
+
+  document.getElementById('nameInput').addEventListener('input', checkReady);
+
+  function checkReady() {
+    const name = document.getElementById('nameInput').value.trim();
+    document.getElementById('submitBtn').disabled = chosen < 0 || !name;
+  }
+
+  async function submitVote() {
+    if (localStorage.getItem(VOTED) === '1') { show('alreadyVoted'); return; }
+    const name = document.getElementById('nameInput').value.trim();
+    if (!name || chosen < 0) return;
+
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').textContent = 'กำลังบันทึก…';
+
+    if (isSetup) {
+      // Re-fetch latest before writing to avoid overwriting others' votes
+      try {
+        const r = await fetch(API);
+        const j = await r.json();
+        currentData = j.record || currentData;
+      } catch(e) {}
+    }
+
+    currentData.votes[chosen]++;
+    currentData.voters.push(name.toLowerCase());
+
+    if (isSetup) {
+      try { await saveData(currentData); } catch(e) {}
+    }
+
+    localStorage.setItem(VOTED, '1');
+    show('successMsg');
+    document.getElementById('successText').innerHTML =
+      `คุณโหวตให้ <strong>${NAMES[chosen]}</strong><br>You voted for <strong>${NAMES[chosen]}</strong>`;
+    renderBars('successBars', 'successTotal');
+  }
+
+  function renderBars(barId, totalId) {
+    const el = document.getElementById(barId);
+    if (!el) return;
+    const total = currentData.votes.reduce((a,b)=>a+b,0);
+    el.innerHTML = NAMES.map((n,i) => {
+      const pct   = total ? Math.round(currentData.votes[i]/total*100) : 0;
+      const count = currentData.votes[i];
+      return `<div class="result-row">
+        <div class="result-name" title="${n}">${n}</div>
+        <div class="result-track"><div class="result-fill" style="width:${pct}%"></div></div>
+        <div class="result-count">${count} โหวต (${pct}%)</div>
+      </div>`;
+    }).join('');
+    const tn = document.getElementById(totalId);
+    if (tn) tn.textContent = total ? `รวม ${total} โหวต · ${total} votes total` : 'ยังไม่มีโหวต · No votes yet';
+  }
+
+  fetchData();
+</script>
+</body>
+</html>
