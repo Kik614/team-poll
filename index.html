@@ -399,64 +399,45 @@
 </footer>
 
 <script>
-  // ─── CONFIG — paste your JSONBin ID here ───────────────────────────
-  const BIN_ID = '6a28fc29f5f4af5e29d62ca9';
-  const API_KEY = '$2a$10$t8yN8uSbmj8IRhA9j9yiSep29S55dwxXyG55UyCOm5OwgZrvX8Goe';
-  // ──────────────────────────────────────────────────────────────────
+  const SCRIPT_URL = 'https://script.google.com/a/macros/shopee.com/s/AKfycbwHkAgmRRgM-pAhYcQ008ALyX8H0Bgm4q3N2MSfVSUDbQU5JoKoJ1OsoCnHFNE32Bc/exec';
 
-  const API    = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-  const VOTED  = 'eng_poll_voted_19jun';
-  const NAMES  = [
+  const NAMES = [
     'อิเจ้ แจ่วฮ้อน (Siam)',
     'นักล่าหมูกระทะ (MBK)',
     'SSAMTHING TOGETHER (Samyan)'
   ];
 
   let chosen = -1;
-  let currentData = { votes: [0,0,0], voters: [] };
-
-
-  const isSetup = true;
+  let currentData = { votes: [0, 0, 0] };
 
   function show(id) {
     ['spinner','formSection','successMsg','alreadyVoted'].forEach(s => {
       const el = document.getElementById(s);
-      if (el) el.style.display = s === id ? (id === 'formSection' ? 'block' : 'block') : 'none';
+      if (!el) return;
+      el.style.display = 'none';
+      el.classList.remove('visible');
     });
-    if (id === 'successMsg') document.getElementById('successMsg').classList.add('visible');
-    if (id === 'alreadyVoted') document.getElementById('alreadyVoted').classList.add('visible');
+    const target = document.getElementById(id);
+    if (target) { target.style.display = 'block'; target.classList.add('visible'); }
   }
 
-  async function fetchData() {
-    if (!isSetup) {
-      show('formSection');
-      return;
-    }
-    show('spinner');
+  async function fetchResults() {
     try {
-      const r = await fetch(API, { headers: { 'X-Access-Key': API_KEY } });
+      const r = await fetch(SCRIPT_URL);
       const j = await r.json();
-      currentData = j.record || { votes:[0,0,0], voters:[] };
+      currentData = j;
     } catch(e) {
-      currentData = { votes:[0,0,0], voters:[] };
-    }
-    if (localStorage.getItem(VOTED) === '1') {
-      show('alreadyVoted');
-      renderBars('alreadyBars', 'alreadyTotal');
-    } else {
-      show('formSection');
-      renderBars('liveResultBars', 'liveTotal');
-      const total = currentData.votes.reduce((a,b)=>a+b,0);
-      if (total > 0) document.getElementById('liveResults').classList.add('visible');
+      currentData = { votes: [0,0,0] };
     }
   }
 
-  async function saveData(data) {
-    await fetch(API, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Access-Key': API_KEY },
-      body: JSON.stringify(data)
-    });
+  async function init() {
+    show('spinner');
+    await fetchResults();
+    show('formSection');
+    renderBars('liveResultBars', 'liveTotal');
+    const total = currentData.votes.reduce((a,b)=>a+b,0);
+    if (total > 0) document.getElementById('liveResults').classList.add('visible');
   }
 
   function selectCard(idx) {
@@ -473,34 +454,31 @@
   }
 
   async function submitVote() {
-    if (localStorage.getItem(VOTED) === '1') { show('alreadyVoted'); return; }
     const name = document.getElementById('nameInput').value.trim();
     if (!name || chosen < 0) return;
 
     document.getElementById('submitBtn').disabled = true;
     document.getElementById('submitBtn').textContent = 'กำลังบันทึก…';
 
-    if (isSetup) {
-      // Re-fetch latest before writing to avoid overwriting others' votes
-      try {
-        const r = await fetch(API, { headers: { 'X-Access-Key': API_KEY } });
-        const j = await r.json();
-        currentData = j.record || currentData;
-      } catch(e) {}
-    }
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, restaurant: NAMES[chosen] })
+      });
+    } catch(e) {}
 
     currentData.votes[chosen]++;
-    currentData.voters.push(name.toLowerCase());
-
-    if (isSetup) {
-      try { await saveData(currentData); } catch(e) {}
-    }
-
-    localStorage.setItem(VOTED, '1');
     show('successMsg');
     document.getElementById('successText').innerHTML =
       `คุณโหวตให้ <strong>${NAMES[chosen]}</strong><br>You voted for <strong>${NAMES[chosen]}</strong>`;
     renderBars('successBars', 'successTotal');
+
+    setTimeout(async () => {
+      await fetchResults();
+      renderBars('successBars', 'successTotal');
+    }, 2500);
   }
 
   function renderBars(barId, totalId) {
@@ -520,7 +498,7 @@
     if (tn) tn.textContent = total ? `รวม ${total} โหวต · ${total} votes total` : 'ยังไม่มีโหวต · No votes yet';
   }
 
-  fetchData();
+  init();
 </script>
 </body>
 </html>
