@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -461,11 +460,14 @@
     document.getElementById('submitBtn').textContent = 'กำลังบันทึก…';
 
     try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, restaurant: NAMES[chosen] })
+      const params = new URLSearchParams({
+        action: 'vote',
+        name: name,
+        restaurant: NAMES[chosen]
+      });
+      await fetch(SCRIPT_URL + '?' + params.toString(), {
+        method: 'GET',
+        mode: 'no-cors'
       });
     } catch(e) {}
 
