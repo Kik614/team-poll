@@ -420,14 +420,39 @@
     if (target) { target.style.display = 'block'; target.classList.add('visible'); }
   }
 
-  async function fetchResults() {
-    try {
-      const r = await fetch(SCRIPT_URL);
-      const j = await r.json();
-      currentData = j;
-    } catch(e) {
-      currentData = { votes: [0,0,0] };
-    }
+  // ── JSONP: bypass CORS for reading results ──
+  function fetchResults() {
+    return new Promise(resolve => {
+      const cb = 'pollCB_' + Date.now();
+      window[cb] = function(data) {
+        currentData = data;
+        delete window[cb];
+        if (script.parentNode) script.parentNode.removeChild(script);
+        resolve();
+      };
+      const script = document.createElement('script');
+      script.src = SCRIPT_URL + '?callback=' + cb;
+      script.onerror = function() {
+        delete window[cb];
+        if (script.parentNode) script.parentNode.removeChild(script);
+        resolve();
+      };
+      document.head.appendChild(script);
+    });
+  }
+
+  // ── IMG tag: bypass CORS for sending vote ──
+  function sendVote(name, restaurant) {
+    return new Promise(resolve => {
+      const img = new Image();
+      const params = new URLSearchParams({
+        action: 'vote',
+        name: name,
+        restaurant: restaurant
+      });
+      img.onload = img.onerror = () => resolve();
+      img.src = SCRIPT_URL + '?' + params.toString();
+    });
   }
 
   async function init() {
@@ -459,28 +484,17 @@
     document.getElementById('submitBtn').disabled = true;
     document.getElementById('submitBtn').textContent = 'กำลังบันทึก…';
 
-    try {
-      const params = new URLSearchParams({
-        action: 'vote',
-        name: name,
-        restaurant: NAMES[chosen]
-      });
-      await fetch(SCRIPT_URL + '?' + params.toString(), {
-        method: 'GET',
-        mode: 'no-cors'
-      });
-    } catch(e) {}
+    // Send vote via img tag (bypasses CORS)
+    await sendVote(name, NAMES[chosen]);
 
-    currentData.votes[chosen]++;
+    // Wait a moment for Sheet to update, then fetch real results
+    await new Promise(r => setTimeout(r, 2000));
+    await fetchResults();
+
     show('successMsg');
     document.getElementById('successText').innerHTML =
       `คุณโหวตให้ <strong>${NAMES[chosen]}</strong><br>You voted for <strong>${NAMES[chosen]}</strong>`;
     renderBars('successBars', 'successTotal');
-
-    setTimeout(async () => {
-      await fetchResults();
-      renderBars('successBars', 'successTotal');
-    }, 2500);
   }
 
   function renderBars(barId, totalId) {
