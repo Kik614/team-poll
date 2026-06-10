@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -400,6 +401,7 @@
 <script>
   // ─── CONFIG — paste your JSONBin ID here ───────────────────────────
   const BIN_ID = '6a28fc29f5f4af5e29d62ca9';
+  const API_KEY = '$2a$10$t8yN8uSbmj8IRhA9j9yiSep29S55dwxXyG55UyCOm5OwgZrvX8Goe';
   // ──────────────────────────────────────────────────────────────────
 
   const API    = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
@@ -432,7 +434,7 @@
     }
     show('spinner');
     try {
-      const r = await fetch(API);
+      const r = await fetch(API, { headers: { 'X-Access-Key': API_KEY } });
       const j = await r.json();
       currentData = j.record || { votes:[0,0,0], voters:[] };
     } catch(e) {
@@ -452,7 +454,7 @@
   async function saveData(data) {
     await fetch(API, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Access-Key': API_KEY },
       body: JSON.stringify(data)
     });
   }
@@ -481,7 +483,7 @@
     if (isSetup) {
       // Re-fetch latest before writing to avoid overwriting others' votes
       try {
-        const r = await fetch(API);
+        const r = await fetch(API, { headers: { 'X-Access-Key': API_KEY } });
         const j = await r.json();
         currentData = j.record || currentData;
       } catch(e) {}
